@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core','api',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -153,4 +154,6 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "EXCEPTION_HANDLER": "core.exceptions.exception_handler",
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.SetPagination",
+    "PAGE_SIZE": 12,
 }
