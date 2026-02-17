@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializers import *
+from core.pagination import SetPagination
 
 class HealthView(APIView):
     authentication_classes = []
@@ -21,7 +22,7 @@ class HealthView(APIView):
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
-
+    pagination_class = SetPagination
     def get_queryset(self):
         return Project.objects.filter(created_by=self.request.user).order_by("-id")
     
@@ -33,7 +34,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
-    
+    pagination_class = SetPagination
     def get_queryset(self):
         return Task.objects.filter(created_by=self.request.user).order_by("-id")
     
@@ -44,7 +45,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
-    
+    pagination_class = SetPagination
     def get_queryset(self):
         return Comment.objects.filter(created_by=self.request.user).order_by("id")
     
