@@ -18,7 +18,7 @@ class RequestIdLoggingMiddleware(MiddlewareMixin):
 
         request._start_time = time.perf_counter()
 
-    def process_response(self, request, response):
+    def process_response(self, request, response): 
         duration_ms = -1.0
 
         if hasattr(request, "_start_time"):
