@@ -5,6 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from .models import *
 from .serializers import *
 from core.pagination import SetPagination
+from rest_framework.pagination import CursorPagination
+from .filters import TaskFilter
+
 
 class HealthView(APIView):
     authentication_classes = []
@@ -35,6 +38,12 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = SetPagination
+    filterset_class = TaskFilter
+    ordering_fields = ["created_at", "priority"]
+    ordering = ["-created_at"]
+
+    
+
     def get_queryset(self):
         return Task.objects.filter(created_by=self.request.user).order_by("-id")
     
@@ -45,7 +54,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = SetPagination
+    pagination_class = CursorPagination
     def get_queryset(self):
         return Comment.objects.filter(created_by=self.request.user).order_by("id")
     
