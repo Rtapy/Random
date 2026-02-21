@@ -7,7 +7,12 @@ from .serializers import *
 from core.pagination import SetPagination
 from rest_framework.pagination import CursorPagination
 from .filters import TaskFilter
+from django.db import reset_queries, connection
 
+
+class CursorOrdering(CursorPagination):
+    ordering = "-created_at"
+    
 
 class HealthView(APIView):
     authentication_classes = []
@@ -54,9 +59,25 @@ class TaskViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = CursorPagination
+    pagination_class = CursorOrdering
     def get_queryset(self):
         return Comment.objects.filter(created_by=self.request.user).order_by("id")
     
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+
+class TaskNPlusOneViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = TaskListSerializer
+
+
+    def get_queryset(self):
+        return Task.objects.all().order_by("-created_at")
+    
+    
+    def list(self, request, *args, **kwargs):
+        reset_queries()
+        response = super().list(request, *args, **kwargs)
+        print("N+1 query count:", len(connection.queries))
+        return response
+    
